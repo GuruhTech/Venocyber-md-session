@@ -34,6 +34,38 @@ router.get('/', async (req, res) => {
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+import { makeid } from './id.js';
+import express from 'express';
+import fs from 'fs';
+import pino from 'pino';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import Venocyber_Tech, { 
+    useMultiFileAuthState,
+    delay,
+    makeCacheableSignalKeyStore
+} from 'maher-zubair-baileys';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const router = express.Router();
+
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
+}
+
+router.get('/', async (req, res) => {
+    const id = makeid();
+    let num = req.query.number;
+    
+    async function VENOCYBER_MD_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            let Pair_Code_By_Venocyber_Tech = Venocyber_Tech({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
