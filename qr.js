@@ -1,26 +1,19 @@
-import PastebinAPI from 'pastebin-js';
 import { makeid } from './id.js';
 import QRCode from 'qrcode';
 import express from 'express';
-import path from 'path';
 import fs from 'fs';
 import pino from 'pino';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import Venocyber_Tech, { 
-    useMultiFileAuthState, 
-    jidNormalizedUser, 
-    Browsers, 
-    delay, 
-    makeInMemoryStore 
+    useMultiFileAuthState,
+    delay,
+    Browsers
 } from '@whiskeysockets/baileys';
-import { readFile } from 'node:fs/promises';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
-let router = express.Router();
+const router = express.Router();
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
@@ -32,6 +25,7 @@ function removeFile(FilePath) {
 
 router.get('/', async (req, res) => {
     const id = makeid();
+    
     async function VENOCYBER_MD_QR_CODE() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
