@@ -2,33 +2,37 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import fs from 'fs';
+import events from 'events';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-global.__path = __dirname;
+const __path = __dirname;
 
 const PORT = process.env.PORT || 8000;
 
-// Dynamic imports for the other files
+// Increase max listeners
+events.EventEmitter.defaultMaxListeners = 500;
+
+// Import routes dynamically
 let server, code;
 
-// Import the other files dynamically
+// Load the modules
 const loadModules = async () => {
-    server = (await import('./qr.js')).default;
-    code = (await import('./pair.js')).default;
-    
-    app.use('/qr', server);
-    app.use('/code', code);
+    try {
+        server = (await import('./qr.js')).default;
+        code = (await import('./pair.js')).default;
+        
+        app.use('/qr', server);
+        app.use('/code', code);
+    } catch (error) {
+        console.error('Error loading modules:', error);
+    }
 };
 
 loadModules();
 
-import('events').then(events => {
-    events.EventEmitter.defaultMaxListeners = 500;
-});
-
+// Serve HTML files
 app.use('/pair', async (req, res, next) => {
     res.sendFile(join(__path, 'pair.html'));
 });
